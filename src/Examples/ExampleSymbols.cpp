@@ -60,9 +60,9 @@ int main(void)
 	const auto timestampBegin = std::chrono::high_resolution_clock::now();
 
 #ifdef _DEBUG
-	const wchar_t* const pdbPath = LR"(..\bin\x64\Debug\ExampleSymbols.pdb)";
+	const wchar_t* const pdbPath = LR"(ExampleSymbols.pdb)";
 #else
-	const wchar_t* const pdbPath = LR"(..\bin\x64\Release\ExampleSymbols.pdb)";
+	const wchar_t* const pdbPath = LR"(ExampleSymbols.pdb)";
 #endif
 	
 	printf("Opening PDB file %ls\n", pdbPath);
@@ -311,6 +311,11 @@ int main(void)
 
 	printf("Stored %zu symbols in std::vector using std::string\n", symbols.size());
 	printf("Running time: %.3fms\n", seconds.count()*1000.0);
+
+	for (auto v : symbols)
+	{
+		printf("name:%s,rva=0x%x\n", v.name.c_str(), v.rva);
+	}
 
 	return 0;
 }

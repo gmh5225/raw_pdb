@@ -21,7 +21,9 @@
     <ClCompile Include="..\src\PDB_InfoStream.cpp" />
     <ClCompile Include="..\src\PDB_IPIStream.cpp" />
     <ClCompile Include="..\src\PDB_ModuleInfoStream.cpp" />
+    <ClCompile Include="..\src\PDB_ModuleLineStream.cpp" />
     <ClCompile Include="..\src\PDB_ModuleSymbolStream.cpp" />
+    <ClCompile Include="..\src\PDB_NamesStream.cpp" />
     <ClCompile Include="..\src\PDB_PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -30,6 +32,7 @@
     <ClCompile Include="..\src\PDB_RawFile.cpp" />
     <ClCompile Include="..\src\PDB_SectionContributionStream.cpp" />
     <ClCompile Include="..\src\PDB_SourceFileStream.cpp" />
+    <ClCompile Include="..\src\PDB_TPIStream.cpp" />
     <ClCompile Include="..\src\PDB_Types.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -59,12 +62,16 @@
     <ClInclude Include="..\src\PDB_IPIStream.h" />
     <ClInclude Include="..\src\PDB_IPITypes.h" />
     <ClInclude Include="..\src\PDB_ModuleInfoStream.h" />
+    <ClInclude Include="..\src\PDB_ModuleLineStream.h" />
     <ClInclude Include="..\src\PDB_ModuleSymbolStream.h" />
+    <ClInclude Include="..\src\PDB_NamesStream.h" />
     <ClInclude Include="..\src\PDB_PCH.h" />
     <ClInclude Include="..\src\PDB_PublicSymbolStream.h" />
     <ClInclude Include="..\src\PDB_RawFile.h" />
     <ClInclude Include="..\src\PDB_SectionContributionStream.h" />
     <ClInclude Include="..\src\PDB_SourceFileStream.h" />
+    <ClInclude Include="..\src\PDB_TPIStream.h" />
+    <ClInclude Include="..\src\PDB_TPITypes.h" />
     <ClInclude Include="..\src\PDB_Types.h" />
     <ClInclude Include="..\src\PDB_Util.h" />
   </ItemGroup>

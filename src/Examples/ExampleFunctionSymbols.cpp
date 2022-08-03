@@ -15,10 +15,12 @@ namespace
 		std::string name;
 		uint32_t rva;
 		uint32_t size;
+		const PDB::CodeView::DBI::Record* frameProc;
 	};
 }
 
 
+void ExampleFunctionSymbols(const PDB::RawFile& rawPdbFile, const PDB::DBIStream& dbiStream);
 void ExampleFunctionSymbols(const PDB::RawFile& rawPdbFile, const PDB::DBIStream& dbiStream)
 {
 	TimedScope total("\nRunning example \"Function symbols\"");
@@ -70,7 +72,12 @@ void ExampleFunctionSymbols(const PDB::RawFile& rawPdbFile, const PDB::DBIStream
 				const char* name = nullptr;
 				uint32_t rva = 0u;
 				uint32_t size = 0u;
-				if (record->header.kind == PDB::CodeView::DBI::SymbolRecordKind::S_THUNK32)
+				if (record->header.kind == PDB::CodeView::DBI::SymbolRecordKind::S_FRAMEPROC)
+				{
+					functionSymbols[functionSymbols.size() - 1].frameProc = record;
+					return;
+				}
+				else if (record->header.kind == PDB::CodeView::DBI::SymbolRecordKind::S_THUNK32)
 				{
 					if (record->data.S_THUNK32.thunk == PDB::CodeView::DBI::ThunkOrdinal::TrampolineIncremental)
 					{
@@ -117,7 +124,7 @@ void ExampleFunctionSymbols(const PDB::RawFile& rawPdbFile, const PDB::DBIStream
 					return;
 				}
 
-				functionSymbols.push_back(FunctionSymbol { name, rva, size });
+				functionSymbols.push_back(FunctionSymbol { name, rva, size, nullptr });
 				seenFunctionRVAs.emplace(rva);
 			});
 		}
@@ -165,7 +172,7 @@ void ExampleFunctionSymbols(const PDB::RawFile& rawPdbFile, const PDB::DBIStream
 
 			// this is a new function symbol, so store it.
 			// note that we don't know its size yet.
-			functionSymbols.push_back(FunctionSymbol { record->data.S_PUB32.name, rva, 0u });
+			functionSymbols.push_back(FunctionSymbol { record->data.S_PUB32.name, rva, 0u, nullptr });
 		}
 
 		scope.Done(count);
@@ -204,6 +211,7 @@ void ExampleFunctionSymbols(const PDB::RawFile& rawPdbFile, const PDB::DBIStream
 
 			const FunctionSymbol& nextSymbol = functionSymbols[i + 1u];
 			const size_t size = nextSymbol.rva - currentSymbol.rva;
+			(void)size; // unused
 			++foundCount;
 		}
 

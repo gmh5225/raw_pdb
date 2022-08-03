@@ -7,7 +7,8 @@
 #include "PDB_RawFile.h"
 #include "PDB_InfoStream.h"
 #include "PDB_DBIStream.h"
-
+#include "PDB_TPIStream.h"
+#include "PDB_NamesStream.h"
 
 namespace
 {
@@ -75,13 +76,14 @@ namespace
 extern void ExampleSymbols(const PDB::RawFile&, const PDB::DBIStream&);
 extern void ExampleContributions(const PDB::RawFile&, const PDB::DBIStream&);
 extern void ExampleFunctionSymbols(const PDB::RawFile&, const PDB::DBIStream&);
-
+extern void ExampleLines(const PDB::RawFile& rawPdbFile, const PDB::DBIStream& dbiStream, const PDB::InfoStream& infoStream);
+extern void ExampleTypes(const PDB::TPIStream&);
 
 int main(int argc, char** argv)
 {
 	if (argc != 2)
 	{
-		printf("Incorrect usage\n");
+		printf("Usage: Examples <PDB path>\nError: Incorrect usage");
 
 		return 1;
 	}
@@ -122,8 +124,22 @@ int main(int argc, char** argv)
 		return 4;
 	}
 
+	const auto h = infoStream.GetHeader();
+	printf("Version %u, signature %u, age %u, GUID %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x\n",
+		static_cast<uint32_t>(h->version), h->signature, h->age,
+		h->guid.Data1, h->guid.Data2, h->guid.Data3,
+		h->guid.Data4[0], h->guid.Data4[1], h->guid.Data4[2], h->guid.Data4[3], h->guid.Data4[4], h->guid.Data4[5], h->guid.Data4[6], h->guid.Data4[7]);
+
 	const PDB::DBIStream dbiStream = PDB::CreateDBIStream(rawPdbFile);
 	if (!HasValidDBIStreams(rawPdbFile, dbiStream))
+	{
+		MemoryMappedFile::Close(pdbFile);
+
+		return 5;
+	}
+
+	const PDB::TPIStream tpiStream = PDB::CreateTPIStream(rawPdbFile);
+	if (PDB::HasValidTPIStream(rawPdbFile) != PDB::ErrorCode::Success)
 	{
 		MemoryMappedFile::Close(pdbFile);
 
@@ -134,6 +150,8 @@ int main(int argc, char** argv)
 	ExampleContributions(rawPdbFile, dbiStream);
 	ExampleSymbols(rawPdbFile, dbiStream);
 	ExampleFunctionSymbols(rawPdbFile, dbiStream);
+	ExampleLines(rawPdbFile, dbiStream, infoStream);
+	ExampleTypes(tpiStream);
 
 	MemoryMappedFile::Close(pdbFile);
 
